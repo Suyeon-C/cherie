@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="SellMapper">
+
+	<sql id="mseller">
+		select *
+		from seller
+	</sql>
+
+
+	<select id="selectSeller" resultType="Seller">
+		<include refid="mseller" />
+		where sellEmail=#{sellEmail}
+	</select>
+
+	<select id="selectSelEmailPW" resultType="Seller">
+		<include refid="mseller" />
+		where sellEmail=#{sellEmail} and sellPassword=#{sellPassword}
+	</select>
+	
+	<select id="selectSellCount" resultType="Integer">
+		select count(*) as cnt from seller
+		where sellName like CONCAT('%',#{keyword},'%') or sellPhone like CONCAT('%',#{keyword},'%') or sellEmail like CONCAT('%',#{keyword},'%') 
+	</select>
+
+	<insert id="insertSell">
+		insert into seller(sellEmail, sellPassword, sellName, sellPhone, sellBirth,
+		sellZipcode, sellAddress, sellDaddress, sellRegNumber)
+		values(#{sellEmail}, #{sellPassword}, #{sellName}, #{sellPhone},
+		#{sellBirth}, #{sellZipcode}, #{sellAddress}, #{sellDaddress},
+		#{sellRegNumber})
+	</insert>
+
+	<update id="updateSell">
+		update seller set
+		sellEmail=#{sellEmail},
+		sellPassword=#{sellPassword},
+		sellName=#{sellName},
+		sellPhone=#{sellPhone},
+		sellBirth=#{sellBirth},
+		sellZipcode=#{sellZipcode},
+		sellAddress=#{sellAddress},
+		sellDaddress=#{sellDaddress},
+		sellRegNumber=#{sellRegNumber}
+		where
+		sellEmail=#{sellEmail}
+	</update>
+
+	<delete id="deleteSell">
+		delete from seller
+		where sellEmail=#{sellEmail}
+	</delete>
+
+	<select id="selectSelEmail" resultType="Seller">
+		<include refid="mseller" />
+		where sellName=#{sellName} and sellPhone=#{sellPhone}
+	</select>
+
+	<select id="selectSelPW" resultType="Seller">
+		<include refid="mseller" />
+		where sellEmail=#{sellEmail} and sellName=#{sellName} and
+		sellPhone=#{sellPhone}
+	</select>
+
+	<!-- 이메일 중복확인 -->
+	<select id="countSeller" resultType="Integer">
+		select count(*) as cnt from seller
+		where sellEmail=#{sellEmail}
+	</select>
+
+	<!-- 임시 이메일로 비밀번호 변경 -->
+	<update id="updatePw">
+		update seller set sellPassword = #{sellPassword}
+		where sellPhone =#{sellPhone} and sellName = #{sellName}
+	</update>
+
+
+</mapper>

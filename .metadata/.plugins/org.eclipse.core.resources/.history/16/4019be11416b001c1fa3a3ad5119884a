@@ -1,0 +1,39 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../common/navigation.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<title>이메일 찾기</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="${contextPath}/css/buyerEmailSearch.css" rel="stylesheet">
+</head>
+<body>
+<div class="container py-5 text-center"> 
+<h3 class="pb-4"> 이메일 찾기 </h3>
+
+<div class="cd-tabs">
+
+<form name="seller_emailsearch_form" action="${contextPath}/seller/emailSearch" method="post" class="selected">
+   <div class="form-fild">
+        <input type="text" class="input" placeholder="이름"
+               name="sellName" id="sellName" data-toggle="tooltip"
+               data-placement="top" title="이름을 입력해주세요.">
+   </div>
+   <div class="form-fild">
+        <input type="text" class="input" placeholder="휴대전화번호"
+               name="sellPhone" id="sellPhone" data-toggle="tooltip"
+               data-placement="top" title="휴대전화번호를 입력해주세요.">
+   </div>
+   <br>
+<button type="submit" class="button-login" data-toggle="modal" data-target="#myModal">이메일 찾기</button>
+<br><br>
+	<span><a href="${contextPath}/seller/pwSearch">비밀번호 찾기</a>｜</span> 
+	<span><a href="${contextPath}/seller/login">로그인</a></span> 
+</form>
+
+</div>
+
+</div>
+</body>
+</html>

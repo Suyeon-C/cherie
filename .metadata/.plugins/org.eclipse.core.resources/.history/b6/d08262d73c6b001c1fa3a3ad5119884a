@@ -1,0 +1,44 @@
+package com.order.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.dto.Order;
+import com.service.JewelryService;
+import com.service.OrderService;
+
+@Controller
+@RequestMapping("order")
+public class OrderDeleteController {
+
+	@Autowired
+	OrderService oser;
+
+	@Autowired
+	JewelryService jser;
+
+	/* 주문취소 */
+	@GetMapping(value = "/delete")
+	public String get(@RequestParam(value = "orderIdx") int orderIdx) {
+
+		Order order = this.oser.selectOrder(orderIdx);
+
+		int cnt = -1;
+		cnt = oser.deleteOrder(orderIdx);
+
+		if (cnt > 0) {
+
+			jser.reupdateStock(order.getOrderNum(), order.getOrderQua());
+			System.out.println("주문 취소하였습니다.");
+			return "common/main";
+
+		} else {
+
+			System.out.println("주문을 취소 할 수 없습니다.");
+			return "common/main";
+		}
+	}
+}

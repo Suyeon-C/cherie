@@ -1,0 +1,11 @@
+package com.admin.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+//관리자용 판매자(seller) 전체 목록을 조회하는 컨트롤러
+@Controller
+@RequestMapping("admin")
+public class AdminSellController {
+
+}

@@ -1,0 +1,97 @@
+package com.order.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.common.controller.FlowParameter;
+import com.common.controller.Paging;
+import com.dto.Buyer;
+import com.dto.Jewelry;
+import com.dto.Order;
+import com.service.BuyerService;
+import com.service.JewelryService;
+import com.service.OrderService;
+
+@Controller
+@RequestMapping("order")
+public class OrderListController {
+
+	
+	@Autowired
+	OrderService oser;
+	
+	@Autowired
+	JewelryService jser;
+
+	
+	@GetMapping(value="/list")
+	public String get(@RequestParam(value="orderBuyEmail", required=true) String orderBuyEmail,
+					  @RequestParam(value="pageNumber", required = false) String pageNumber,
+					  @RequestParam(value="pageSize", required = false) String pageSize,
+					  @RequestParam(value="keyword", required = false) String keyword,
+					  HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		FlowParameter param = new FlowParameter(pageNumber, pageSize, keyword);
+		
+		System.out.println(this.getClass() + " : " + param.toString());
+
+		int totalCount = oser.totalCount( "%" + param.getKeyword() + "%");
+
+		String myurl =  "list";
+
+		// 페이징 처리
+		Paging pageInfo = new Paging(param.getPageNumber(), param.getPageSize(), totalCount, myurl, param.getKeyword());
+		
+		// 해당 목록 가져오기
+		List<Order> pagelists = this.oser.selectAllOrderPage(pageInfo.getOffset(), pageInfo.getLimit(),
+						 "%" + param.getKeyword() + "%");
+
+		if(pagelists.size() > 0) {
+			
+			Jewelry jew;
+			for(Order order : pagelists) {
+				jew = this.jser.selectJew(order.getOrderNum());
+				order.setJewName(jew.getJewName());
+				order.setJewImg(jew.getJewImg());
+				order.setJewStock(jew.getJewStock());
+				order.setJewPrice(jew.getJewPrice());
+			}
+		
+		// 목록 갯수
+		session.setAttribute("totalCount", totalCount);
+
+		// 목록
+		session.setAttribute("pagelists", pagelists);
+
+		// 페이징 관력 항목
+		session.setAttribute("pagingHtml", pageInfo.getPagingHtml());
+
+		// 필드 검색과 관련 항목
+		session.setAttribute("keyword", param.getKeyword());
+
+		// 파라미터 리스트 문자열 : 상세보기 , 수정 , 삭제 등에 사용됨
+		session.setAttribute("parameter", param.toString());
+
+		
+		
+			return "order/list";
+		
+		} else {
+
+			session.setAttribute("message", "주문 내역이 없습니다. <br> 상품을 구매해보세요!");
+			return "common/main";
+		}
+		
+		
+	}
+}

@@ -1,0 +1,158 @@
+package com.cart.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.dto.Buyer;
+import com.dto.Cart;
+import com.dto.Jewelry;
+import com.dto.Seller;
+import com.service.CartService;
+import com.service.JewelryService;
+
+@Controller
+@RequestMapping("cart")
+public class CartInsertController {
+
+	
+	@Autowired
+	CartService cser;
+	
+	@Autowired
+	JewelryService jser;
+	
+	@GetMapping(value="/insert")
+	public String get(@RequestParam(value="jewIdx", required = true) int cartJewNum,
+					  @RequestParam(value="qty", required=true) int cartBuyQua,
+					  @RequestParam(value="totalprice", required=true) String cartPrice,
+					  HttpServletRequest request) {
+			
+		// 회원일때만 상품 구매가 가능함
+		// 조건 1. 사업자일 경우 → 상품 구매 불가
+		// 조건 2. 비회원일 경우 → 상품 구매 불가
+		// 조건 3. 일반회원이면서 관리자일 경우 → 상품 구매 불가
+		
+		// 에러 메세지를 담을 세션 영역 및 로그인 정보를 가져올 때 사용
+		HttpSession session = request.getSession();
+		Buyer buy = (Buyer) session.getAttribute("loginfo");
+		Seller sell = (Seller) session.getAttribute("loginfo_seller");
+		
+		Jewelry jew;
+		if(buy != null || sell != null) {
+			if(sell != null) {
+				session.setAttribute("message", "사업자는 상품을 구매할 수 없습니다!");
+				return "common/main";
+				
+			}
+			if(buy !=null && buy.getBuyEmail().equals("admin@gmail.com")) {
+				session.setAttribute("message", "관리자는 상품을 구매할 수 없습니다!");
+				return "common/main";
+				
+			}else if(buy !=null && buy.getBuyEmail().equals("admin@gmail.com") == false) {
+				Cart cart = new Cart();
+				cart.setCartBuyEmail(buy.getBuyEmail());
+				cart.setCartBuyQua(cartBuyQua);
+				cart.setCartJewNum(cartJewNum);
+				
+				// 가격 콤마 제거
+				int cartP = Integer.parseInt(cartPrice.replace(",",""));
+				cart.setCartPrice(cartP);
+				
+				// 상품 번호 중복 체크 후 신규 추가와 기존 상품 업데이트로 나눠야함
+				// 단 , 기존 상품 업데이트 시 사업자가 초기 설정한 재고 수의 초과 여부에 따라 등록 처리해줘야함
+				int cnt = -1; // 초기화
+				
+				cnt= this.cser.duplicate(cart);
+				
+				if(cnt > 0) {// 장바구니 테이블에 중복되는 상품번호가 존재
+					System.out.println("중복 O , 기존 데이터에 누적 처리 실행");
+					
+					// 기존 상품 업데이트 전 사업자가 초기 설정한 재고의 수를 초과 했는지 안했는지에 따라
+					// 설정을 다르게 해줘야함
+					// 각각의 회원은 사업자가 초기 설정한 재고까지만 상품을 담을 수 있으며 
+					// 한명의 회원일 경우 자기가 담아놓은 순서 ㄴ 의 조건을 만족해야함.
+					
+					// 순서 ㄱ. 장바구니 테이블에서 해당 상품에 대한 수량 sum 값 구하기 → 변수 sum_qty
+					// 순서 ㄴ. 사업자가 초기 설정한 재고량 - sum_qty 의 차 구하기 → 변수 gap
+					
+					// 조건 가. gap == 0 이면 상품이 품절되었다는 메세지 alert
+					// 조건 나. gap != 0 이면 아래 조건 수행 (하위 조건을 처리하므로 gap 이 0보다 작을 경우는 없음)
+					
+					// switch case 문 (2개의 하위 조건에 해당하는 결과 변수 생성 → 변수 result
+					// 하위 조건 가. 회원이 선택한 수량 <= gap 이면 해당 상품에 해당하는 수량 , 가격을 누적 → result == 1
+					// 하위 조건 나. 회원이 선택한 수량 > gap 이면 gap까지만 상품을 담을 수 있다는 메세지 alert → result == -1
+
+					 // 장바구니 테이블에서 수량에 대한 전체 sum 값
+					int sum_qty = -1;
+					sum_qty = this.cser.selectByQty(cart);
+					System.out.println(sum_qty);
+					
+					jew = this.jser.selectJew(cartJewNum);
+					
+					int gap =  jew.getJewStock() - sum_qty;
+					int result = 0;
+					
+					if(gap == 0) {
+						session.setAttribute("message", "상품을 더 이상 담을 수 없습니다!");
+						return "common/main";
+						//return "redirect:/jewelry/detail?"+"jewIdx=" +cartJewNum;
+						
+					}else {
+						
+						if(cart.getCartBuyQua() <= gap) {
+							result =1;
+						} else if (cart.getCartBuyQua() > gap) {
+							result = -1;
+						}
+						switch(result) {
+						case 1:
+							cnt = -1;
+							cnt = this.cser.updateQtyPrice(cart);
+							if(cnt > 0) {
+								System.out.println("기존 데이터에 수량 , 가격 누적 성공");
+								session.setAttribute("cart_modal", "success");
+								return "common/main";
+								//return "redirect:/jewelry/detail?"+"jewIdx="+cartJewNum;
+								
+							}
+							break;
+							
+						case -1:
+							session.setAttribute("message", "해당 상품은 " + gap + "개 남았습니다. "
+									+ "<br> 수량을 확인하세요!");
+							return "common/main";
+							//return "redirect:/jewelry/detail?"+"jewIdx="+cartJewNum;
+
+						}
+					}
+					
+				} else {// 장바구니 테이블에 상품번호가 중복되지 않음 (신규)
+					
+					System.out.println("중복 X , 신규 상품 등록 처리 실행");
+					cnt = -1; // 초기화
+					cnt = this.cser.cartInsert(cart);
+					
+					if(cnt > 0) {
+						System.out.println("신규 상품 등록 처리 성공");
+						session.setAttribute("cart_modal", "success");
+						return "common/main";
+						//return "redirect:/jewelry/detail?"+"jewIdx="+cartJewNum;
+					}
+				}
+
+			}
+			
+		} else {// 로그인이 되어있지 않으면
+			session.setAttribute("message", "상품 구매 전 로그인을 먼저 해주세요!");
+			return "buyer/login";
+			
+		}
+		return "common/main";
+	}
+ }

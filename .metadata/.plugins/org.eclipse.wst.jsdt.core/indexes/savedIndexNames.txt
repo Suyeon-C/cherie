@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+/Users/choesuyeon/Desktop/cherie/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
+1843467393.index
+2305318146.index
+1451043955.index
+3046901602.index
+971295184.index
+3987134408.index

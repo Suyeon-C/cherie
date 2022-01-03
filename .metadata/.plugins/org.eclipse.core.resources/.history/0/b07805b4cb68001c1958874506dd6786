@@ -1,0 +1,248 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../common/navigation.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<title>로그인</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script>
+$(document).ready(function() {
+	var message = ${sessionScope.message};
+	$(".login-btn").click(function() {
+			alert(message); });
+			
+		
+});
+
+
+
+</script>
+<style>
+input[type="text"]{
+display:block;
+position:relative;
+box-size:content-box;
+padding:0;
+height:5px;
+width:40;
+
+}
+/* -------------------------------- 
+Primary style
+-------------------------------- */
+
+
+a {
+  color: #808080;
+  text-decoration: none;
+}
+
+textarea::placeholder {color:#8C8C8C}
+
+
+
+/* -------------------------------- 
+Main components 
+-------------------------------- */
+
+
+.cd-tabs {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  min-width: 400px;
+  margin: 0 auto;
+}
+.cd-tabs:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.cd-tabs nav {
+  overflow: hidden;
+  position: relative;
+}
+.cd-tabs-navigation:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+ .cd-tabs-navigation {
+   padding: 0;
+   margin: 0;
+   width: 100%;
+   background-color: #fff;
+   border: 1px solid #e9e9e9;
+   border-bottom: none;
+   box-shadow: 0 2px 1px #f1f1f1;
+   }
+
+ .cd-tabs-navigation li {
+   display: block;
+   float: left;
+   height: 60px;
+   width: 49%;
+   max-width: 298px;
+   line-height: 60px;
+   text-align: center;
+  }
+  
+ .cd-tabs-navigation a {
+   position: relative;
+   display: block;
+   height: 60px;
+   width: 100%;
+   font-size: 18px;
+   padding: 0 0 0 20px;
+ }
+ 
+ .cd-tabs-navigation a::before {
+
+  position: absolute;
+  top: 50%;
+  margin-top: -16px;
+  left: 30%;
+  display: inline-block;
+  height: 26px;
+  width: 26px;
+  background: url('http://image005.flaticon.com/1/svg/32/32317.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  color:black;
+}
+
+
+
+.cd-tabs-navigation a.selected {
+  background-color: #fff !important;
+  box-shadow: inset 0 2px black;
+  color: black;
+}
+
+
+
+/* �뚯뀥濡쒓렇�� 踰꾪듉 遺遺� */
+.buttons {
+	position: relative;
+	overflow: hidden;
+	text-align: center;
+	color: white;
+	width: 100%;
+	padding-left:120px;
+	padding-bottom:20px; 
+	border: 0px;
+	outline: none; 
+}
+
+
+
+/* 濡쒓렇�� form 遺遺� */
+form {
+  display: block;
+  position: relative;
+}
+
+.form-fild {
+  position: relative;
+  display: block;
+  width: 90%;
+  height: 60px;
+  margin: 10px auto;
+}
+
+.form-fild input {
+  position: relative;
+  z-index: 99;
+  border: none;
+  border-bottom: 1px solid #e0e0e0; 
+  display: block;
+  width: 100%;
+  height: 40px;
+  outline: none;
+  font-size: 16px;
+  color: #444;
+  background: transparent;
+}
+
+input:-webkit-autofil,
+textarea:-webkit-autofill, 
+select:-webkit-autofill  {background-color: transparent;}
+/* 로그인 버튼 */
+.login-btn {
+	font-size: 17px;
+	color: white;
+	text-align: center;
+	height:50px;
+	padding:10px;
+	background-color:#242620;
+	border:none;
+	position: relative;
+	width: 90%;
+  	max-width: 600px;
+ 	min-width: 400px;
+    margin: 0 auto; 
+  	}
+	
+.login-btn:hover{
+	border: none;
+	outline: none;
+}
+
+</style>
+</head>
+<body>
+<div class="container text-center py-5">
+
+<h3 class="pb-4"> 로그인 </h3>
+  <div class="cd-tabs">
+         <nav>
+            <ul class="cd-tabs-navigation">
+               <li><a href="${contextPath}/buyer/login" data-content="buyer" class="selected">개인회원</a></li>
+               <li><a href="${contextPath}/seller/login" data-content="seller">사업자회원</a></li>
+            </ul>
+         </nav>
+        
+	<%-- buyer 회원 로그인 ------------------------------------------------------- --%>
+               <form name="buyer-login-form" action="${contextPath}/buyer/login" method="post" class="selected">
+                  <div class="form-fild">
+                     <input type="text" class="input" placeholder="이메일"
+                        name="buyEmail" id="buyEmail" data-toggle="tooltip"
+                        data-placement="top" title="이메일을 입력해주세요.">
+                  </div>
+                  <div class="form-fild">
+                     <input type="password" placeholder="비밀번호" class="input"
+                        name="buyPW" id="buyPW" data-toggle="tooltip"
+                        data-placement="top" title="비밀번호를 입력해주세요.">
+                  </div>
+                  
+                  <div>
+                     <span><a href="${contextPath}/buyer/emailSearch">이메일
+                           찾기</a> ｜</span> <span><a href="${contextPath}/buyer/signup">회원가입</a>
+                        ｜</span> <span><a href="${contextPath}/buyer/pwSearch">비밀번호
+                           찾기</a></span>
+                  </div>
+                  <br>
+         			<div>
+                  <button type="submit" class="login-btn" data-toggle="modal" data-target="#myModal">로그인</button>
+                  </div>
+                  <hr>
+                  <div class="social">
+                     <span>SNS계정으로 간편 로그인/회원가입</span>
+                  </div>
+                  <br>
+                  	<a href="https://kauth.kakao.com/oauth/authorize?client_id=a62ed0a2955c8bc21f644fd281a46439&redirect_uri=http://localhost:8090/kakaoLogin&response_type=code">
+						<img src="/image/kakao.png">	
+					</a>
+               </form>
+            
+        
+      </div>
+   </div>
+</body>
+</html>
+
+

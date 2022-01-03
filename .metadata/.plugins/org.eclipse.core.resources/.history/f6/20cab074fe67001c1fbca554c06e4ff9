@@ -1,0 +1,185 @@
+package com.cart.controller;
+
+
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.dto.Cart;
+import com.dto.Jewelry;
+import com.dto.Order;
+import com.service.CartService;
+import com.service.JewelryService;
+import com.service.OrderService;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.AccessToken;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+
+@Controller
+@RequestMapping("cart")
+public class IamportController  extends SuperClass{
+
+	// 아임포트 객체 생성
+		IamportClient client;
+		
+	
+	@Autowired
+	OrderService oser;
+	
+	@Autowired
+	JewelryService jser;
+	
+	@Autowired
+	CartService cser;
+	
+	private ModelAndView mav = null; // 뷰에 넘겨 줄 ModelAndView 객체
+	
+	public IamportController() {
+		super("/payment", null);
+		this.client = this.getTestClient();
+		this.mav = new ModelAndView();
+		}
+	
+	// API key와 API Secret Key 를 활용해 IamportClient 생성
+		IamportClient getTestClient() {
+			System.out.println("getTestClient 메소드 통과");
+			String test_api_key = "5038522291245744";
+			String test_api_secret = "5234f708eee898e6ed85117fd3e16d7b2085c135365b7edccd5df0a3b25a8570cdb42a1ce5b25ea7";
+			return new IamportClient(test_api_key, test_api_secret);
+		}
+	
+		// 토큰 값 가져오기
+		void getToken() {
+			System.out.println("토큰 값 가져오기");
+			try {
+				IamportResponse<AccessToken> auth_response = client.getAuth();
+				assertNotNull(auth_response.getResponse());
+				assertNotNull(auth_response.getResponse().getToken());
+				System.out.println("get token str: " + auth_response.getResponse().getToken());
+			} catch (IamportResponseException e) {
+
+				System.out.println(e.getMessage());
+
+				switch (e.getHttpStatusCode()) {
+				case 401:
+					System.out.println("http status code 401");
+					break;
+
+				case 500:
+					System.out.println("http status code 500");
+					break;
+
+				}
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+	
+	
+		// ajax POST 방식으로 전송
+		@RequestMapping(value="/payment")
+		@ResponseBody
+		public String doPost(
+				@RequestBody String imp_uid,
+				@RequestBody String merchant_uid,
+				@RequestParam(value = "orderZipcode") String orderZipcode,
+				@RequestParam(value = "orderAddress") String orderAddress, 
+				@RequestParam(value = "orderDaddress") String orderDaddress,
+				@RequestParam(value = "orderBuyEmail") String orderBuyEmail, 
+				@RequestParam(value = "orderRequest") String orderRequest,
+				@RequestParam(value = "orderPhone") String orderPhone, 
+				@RequestParam(value = "orderTotalPay") String orderTotalPay,
+				HttpSession session) throws IOException {
+			
+			String result = "";
+			System.out.println("===> doPost 메소드 진입");
+			System.out.println("===> 확인 imp_uid : " + imp_uid);
+			System.out.println("===> 확인 merchant_uid : " + merchant_uid);
+			
+			
+
+			try {
+				
+				
+			List<Cart> mycart = (List<Cart>) session.getAttribute("cartlists");
+			System.out.println("===> 확인 mycart : " + mycart);
+			
+			int cnt;
+			for(Cart cart : mycart) { // bean setting
+				cnt = -1;
+				
+				Order bean = new Order();
+				
+				bean.setOrderZipcode(orderZipcode);
+				bean.setOrderAddress(orderAddress);
+				bean.setOrderDaddress(orderDaddress);
+				bean.setOrderBuyEmail(orderBuyEmail);
+				bean.setOrderRequest(orderRequest);
+				bean.setOrderPhone(orderPhone);
+				bean.setOrderNum(cart.getCartJewNum());
+				bean.setOrderQua(cart.getCartBuyQua());
+				bean.setOrderPayment(cart.getCartPrice());
+				
+				Jewelry jew = jser.selectJew(cart.getCartJewNum());
+				System.out.println(" 확인 jew ===> " + jew);
+				
+				if(jew.getJewStock() - bean.getOrderQua() >= 0) {
+					
+					cnt = this.oser.insertOrder(bean);
+					
+					if(cnt > 0) {
+						System.out.println("===> 상품 결제 성공");
+						
+						this.jser.updateStock(bean.getOrderNum(), bean.getOrderQua());
+						System.out.println("===> 재고 차감 성공");
+						
+						// 1-3. 장바구니 삭제
+						cnt = -1;
+						cnt = this.cser.cartDeleteByEmail(orderBuyEmail);
+						
+						if (cnt > 0) { // 장바구니 삭제 성공
+							System.out.println("===> 장바구니 삭제 성공");
+							session.setAttribute("message", "상품이 성공적으로 결제 되었습니다!");
+								result ="success";
+						}
+						
+					} else { // 결제 실패
+						System.out.println("===> 상품 결제 실패");
+						session.setAttribute("message", "상품 결제가 실패되었습니다!");
+						result = "fail";
+					}
+					
+				} else {  // 2. 재고 없음 ---> 결제 실패
+					System.out.println("재고 없음, 상품 결제 실패");
+					session.setAttribute("message", "상품 재고가 부족합니다!");
+					result = "fail";
+				}
+			
+			} //for문 종료
+			
+			} catch (IllegalStateException e) {
+				e.printStackTrace();
+				
+			}
+	
+			return result;
+}
+}
+			
+			
+		
+					

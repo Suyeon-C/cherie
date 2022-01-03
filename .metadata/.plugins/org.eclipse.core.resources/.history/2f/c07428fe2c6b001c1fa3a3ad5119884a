@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="JewMapper">
+
+	<sql id="mJew">
+		select *
+		from jewelry
+	</sql>
+
+	<!-- 하나의 쥬얼리 정보 인덱스로 가져오기 -->
+	<select id="selectJew" resultType="Jewelry">
+		<include refid="mJew" />
+		where jewIdx=#{jewIdx}
+	</select>
+
+	<!-- 쥬얼리 등록 -->
+	<insert id="insertJew">
+		insert into jewelry(jewIdx, jewCategory, jewName,
+		jewPrice, jewStock,
+		jewDetail, jewSellEmail, jewImg)
+		value(#{jewIdx},
+		#{jewCategory}, #{jewName}, #{jewPrice}, #{jewStock}, #{jewDetail},
+		#{jewSellEmail}, #{jewImg})
+	</insert>
+
+	<!-- 쥬얼리 정보 수정 -->
+	<update id="updateJew">
+		update jewelry set
+		jewIdx=#{jewIdx},
+		jewCategory=#{jewCategory},
+		jewName=#{jewName},
+		jewPrice=#{jewPrice},
+		jewStock=#{jewStock},
+		jewDetail=#{jewDetail},
+		jewSellEmail=#{jewSellEmail},
+		jewImg=#{jewImg}
+		where jewIdx=#{jewIdx}
+	</update>
+
+	<!-- 쥬얼리 삭제 -->
+	<delete id="deleteJew">
+		delete from jewelry
+		where jewIdx=#{jewIdx}
+	</delete>
+
+	<!-- 쥬얼리 결제 후 재고 수정 -->
+	<update id="updateStock">
+		update jewelry set
+		jewStock = jewStock <![CDATA[ - ]]> #{orderQua}
+		where jewIdx = #{orderNum}
+	</update>
+
+	<!-- 쥬얼리 결제 취소 후 재고 수정 -->
+	<update id="reupdateStock">
+		update jewelry set
+		jewStock = jewStock <![CDATA[ + ]]> #{orderQua}
+		where jewIdx = #{orderNum}
+
+	</update>
+
+	<!-- 메인화면에 최신상품 보여주기 -->
+	<select id="showMain" resultType="Jewelry">
+		<include refid="mJew" />
+		order by jewIdx desc
+
+	</select>
+
+	<!-- 조건에 맞는 쥬얼리 갯수 가져오기 -->
+	<select id="totalCount" parameterType="String" resultType="Integer">
+		select count(*) from jewelry 
+		where jewName like CONCAT('%',#{keyword},'%')
+	</select>
+	
+	<!-- 판매자별로 조건에 맞는 쥬얼리 갯수 가져오기 -->
+	<select id="totalCountBySeller" parameterType="String" resultType="Integer">
+		select count(*) from jewelry 
+		where
+		jewName like CONCAT('%',#{keyword},'%') and jewSellEmail=#{sesseionScope.loginfo_seller.sellEmail}
+	</select>
+
+	<!--   등록된 쥬얼리의 모든 데이터 & 페이징 -->
+	<select id="selectAllJew" resultType="Jewelry">
+		<include refid="mJew" />
+		where jewName like CONCAT('%',#{keyword},'%')  order by jewIdx desc
+	</select>
+	
+	<!--   판매자 별로 등록된 쥬얼리의 모든 데이터 & 페이징 -->
+	<select id="selectJewBySeller" resultType="Jewelry">
+		<include refid="mJew" />
+		where jewName like CONCAT('%',#{keyword},'%') and jewSellEmail=#{sesseionScope.loginfo_seller.sellEmail} order by jewIdx desc
+	</select>
+	
+</mapper>

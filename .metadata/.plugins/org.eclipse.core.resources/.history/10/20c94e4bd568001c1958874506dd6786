@@ -1,0 +1,64 @@
+package com.dao;
+
+import java.util.List;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component("rdao")
+public class ReviewDAOImpl implements ReviewDAO {
+
+	private final String namespace ="ReviewMapper";
+	
+	@Autowired
+	private SqlSessionTemplate sst;
+	
+	@Override
+	public void insertRev(ReviewDAO review) {
+		sst.insert(namespace +".insertRev", review);
+		
+	}
+
+	@Override
+	public void updateRev(ReviewDAO review) {
+		sst.update(namespace+".updateRev", review);
+	}
+
+	@Override
+	public void deleteRev(ReviewDAO review) {
+		sst.delete(namespace+".deleteRev", review);
+		
+	}
+
+	@Override
+	public int totalCount(String keyword) {
+		return sst.selectOne(namespace+".totalCount", keyword);
+	}
+
+	@Override
+	public int totalCountByBuyer(String keyword) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<ReviewDAO> selectRWByJew(int offset, int limit, String keyword, String rwJewNum) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ReviewDAO> selectRWByBuyer(int offset, int limit, String keyword, String rwerEmail) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ReviewDAO> showMainReview() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

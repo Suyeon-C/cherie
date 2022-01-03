@@ -1,0 +1,289 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ include file="./../common/navigation.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<title>악세사리 상세정보</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="${contextPath}/css/styles.css?ver=1" rel="stylesheet">
+<script type="text/javascript">
+/* ===============================  
+버튼 클릭 시 수량, 가격 변동 
+==================================*/
+
+$(document).ready(function(){
+	// 가격 콤마 찍기
+	var jewPrice = $('#jewPrice').val();
+	jewPrice = addcomma(jewPrice);
+	// 가짜 결제 가격 콤마 찍기
+	var inputTotalprice = $('#inputTotalprice').val();
+	inputTotalprice = addcomma(inputTotalprice);
+
+	// 진짜 결제 가격 콤마 찍기
+	var totalprice = $('#totalprice').val();
+	totalprice = addcomma(totalprice);
+
+	function addcomma(str) {
+		str = String(str);
+		return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+	}
+
+	// 최종 가격 문장
+	var result_jewPrice = jewPrice;
+	var result_inputTotalprice = inputTotalprice;
+	var result_totalprice = totalprice;
+	$('#jewPrice').val(result_jewPrice);
+	$('#inputTotalprice').val(result_inputTotalprice);
+	$('#totalprice').val(result_totalprice);
+
+
+// + 버튼을 누르면 수량 증가 , 결제 금액 증가
+$('#plusbtn').click(function() {
+// 사업자가 설정한 최대 인원수
+var _jewStock = $('#jewStock').val();
+var jewStock = parseInt(_jewStock);
+
+// 사용자가 선택하는 수량
+var _qty = $('#inputQuantity').val();
+var qty = parseInt(_qty);
+
+// 사업자가 설정한 개 당 가격 
+var jewPrice = $('#jewPrice').val();
+
+jewPrice = removecomma(jewPrice); // 페이징 로딩 될때 설정했던 콤마 제거
+
+function removecomma(pStr) {
+	var strCheck = /\,/g;
+	pStr = pStr.replace(strCheck, '');
+	return pStr;
+}
+
+var qty_result; // 사용자가 선택한 총 수량
+var totalprice; // 사용자가 선택한 총 가격
+var inputTotalprice; // 사용자가 선택한 총 가격
+
+if (qty < jewStock) {// 사용자가 선택하는 수량이 사업자가 설정한 재고수량 미만이면 + 1 처리 
+	// 인원수 증가
+	qty_result = qty + 1;
+
+	// 파라미터로 넘어갈 총 금액
+	totalprice = jewPrice * qty_result; // 실제 DB로 넘어갈 결제 총 금액
+	totalprice = addcomma(totalprice);
+
+	// 사용자에게 보여줄 가짜 총 금액
+	inputTotalprice = jewPrice * qty_result; // 가짜 총 금액(사용자에게 보여줄 용도)
+	inputTotalprice = addcomma(inputTotalprice);
+
+	$('button#plusbtn').removeAttr('data-toggle', 'modal');
+} else {//사용자가 선택하는 수량이 사업자가 설정한 재고 초과이면 + 0 처리 
+	qty_result = qty;
+
+	// 파라미터로 넘어갈 총 금액
+	totalprice = jewPrice * qty_result; // 실제 DB로 넘어갈 결제 총 금액
+	totalprice = addcomma(totalprice);
+
+	// 사용자에게 보여줄 가짜 총 금액
+	inputTotalprice = jewPrice * qty_result; // 가짜 총 금액(사용자에게 보여줄 용도)
+	inputTotalprice = addcomma(inputTotalprice);
+
+
+	$('#modal-title').html('<i class="fas fa-exclamation-circle"></i>');
+	$('#modal-body').text('재고가 부족합니다!');
+	$('#myModal').modal();
+
+}
+
+$('#inputQuantity').val(qty_result);
+$('#qty').val(qty_result);
+$('#totalprice').val(totalprice);
+$('#inputTotalprice').val(inputTotalprice);
+});
+
+// - 버튼을 누르면 수량 감소 , 결제 금액 감소
+$('#minusbtn').click(function() {
+var _inputQuantity = $('#inputQuantity').val();
+var qty = parseInt(_inputQuantity);
+var qty_result;
+
+// 사업자가 설정한 개당 가격 
+var jewPrice = $('#jewPrice').val();
+
+jewPrice = removecomma(jewPrice); // 페이징 로딩 될때 설정했던 콤마 제거
+
+function removecomma(pStr) {
+	var strCheck = /\,/g;
+	pStr = pStr.replace(strCheck, '');
+	return pStr;
+}
+
+var totalprice; // 사용자가 선택한 총 가격
+var inputTotalprice; // 사용자가 선택한 총 가격
+
+if (qty >= 2) { // 최소값은 1로 남겨놔야함
+
+	qty_result = qty - 1;
+
+
+	totalprice = qty_result * jewPrice;
+	totalprice = addcomma(totalprice);
+
+	inputTotalprice = qty_result * jewPrice;
+	inputTotalprice = addcomma(inputTotalprice);
+} else {
+	qty_result = 1
+
+
+	totalprice = qty_result * jewPrice;
+	totalprice = addcomma(totalprice);
+
+	inputTotalprice = qty_result * jewPrice;
+	inputTotalprice = addcomma(inputTotalprice);
+}
+$('#inputQuantity').val(qty_result);
+$('#qty').val(qty_result);
+
+$('#totalprice').val(totalprice);
+$('#inputTotalprice').val(inputTotalprice);
+});
+});
+
+</script>
+</head>
+<style>
+input[type="text"]{
+border:1px solid black;
+margin:0  atuo;
+border-radius:30px;
+
+}
+</style>
+
+<body>
+<%-- jewerly top --%>
+        <div class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6">
+                    <img class="card-img-top mb-5 mb-md-0" src="/upload/${jew.jewImg}" style="height:600px" alt="상품사진" /></div>
+                    <div class="col-md-6">
+                        <div class="small mb-1">
+                        ${jew.jewCategory}
+                        </div>
+                        <h1 class="display-5 fw-bolder">${jew.jewName}</h1>
+                        <div class="fs-5 mb-5">
+                            <span>₩ ${jew.jewPrice}</span>
+                        </div>
+                        <p class="lead">${jew.jewDetail} </p>
+                        
+                     <%-- buyer 일 때--%> 
+                   <c:if test="${whologin == 0 || whologin ==3}">
+			 	   <form method="get" action="${contextPath}/cart/insert">
+			 		<input type="hidden" value="${jew.jewIdx}" id="jewIdx" name="jewIdx">
+			 		<input type="hidden" value="${jew.jewImg}" id="jewImg" name="jewImg">
+           
+                         <span>수량</span>
+                       <div>
+                            <input type="hidden" disabled="disabled" value="${jew.jewStock}" id="jewStock" name="jewStock">
+                            <input type="text" class="text-center" name="inputQuantity" id="inputQuantity"  value=0 size=5>
+                            <input type="hidden" class="form-control" id="qty" name="qty">
+                            <button id="plusbtn" name="plusbtn" type="button" class="btn-send pmbtn" data-toggle="modal" data-target="#myModal"
+                             style="background-color:white; border: 1px solid black; box-shadow:none;"><i class="bi bi-plus-lg"></i></button>
+                            <button id="minusbtn" name="plustbn" type="button" class="btn-send pmbtn" 
+                            style="background-color:white; border: 1px solid black; box-shadow:none;"><i class="bi bi-dash-lg"></i></button>
+                            
+                 			<div>
+                 			<input type="hidden" value="${jew.jewPrice}" id="jewPrice" name="jewPrice">
+                 			<span>총 금액</span>
+                 			<input type="text" disabled="disabled" class="form-control" value="${jew.jewPrice}" style="width:400px;" id="inputTotalprice" name="inputTotalprice">
+                 			<input type="hidden" class="form-control" value="${jew.jewPrice}" id="totalprice" name="totalprice">
+                 				</div>
+                 			<br>
+                 			
+                            <button class="btn btn-outline-dark" style="margin-left:100px;" type="submit"> 구매하기  </button>
+                        
+                          </div>
+                          </form>
+                 	  </c:if>
+                 	        </div>
+                 	        </div>
+            
+                 	  
+                 	 <%-- seller 와 관리자 일 때, --%> 
+                 	 <c:if test="${whologin == 1 || whologin == 2 }">
+           			 <form method="get" action="${contextPath}/jewelry/update">
+			 		<input type="hidden" value="${jew.jewIdx}" id="jewIdx" name="jewIdx">
+			 		<input type="hidden" value="${jew.jewImg}" id="jewImg" name="jewImg">
+           
+                         <span>수량</span>
+                       <div>
+                            <input type="hidden" disabled="disabled" value="${jew.jewStock}" id="jewStock" name="jewStock">
+                            <input type="text" class="text-center" name="inputQuantity" id="inputQuantity" size=5>
+                            <input type="hidden" class="form-control" id="qty" name="qty">
+                            <button id="plusbtn" name="plusbtn" type="button" class="btn-send pmbtn" data-toggle="modal" data-target="#myModal"
+                             style="background-color:white; border: 1px solid black; box-shadow:none;"><i class="bi bi-plus-lg"></i></button>
+                            <button id="minusbtn" name="plustbn" type="button" class="btn-send pmbtn" 
+                            style="background-color:white; border: 1px solid black; box-shadow:none;"><i class="bi bi-dash-lg"></i></button>
+                            
+                 			<div>
+                 			<input type="hidden" value="${jew.jewPrice}" id="jewPrice" name="jewPrice">
+                 			<span>총 금액</span>
+                 			<input type="text" disabled="disabled" class="form-control" value="${jew.jewPrice}" style="width:400px;" id="inputTotalprice" name="inputTotalprice">
+                 			<input type="hidden" class="form-control" value="${jew.jewPrice}" id="totalprice" name="totalprice">
+                 				</div>
+                 			<br>
+                    
+                          	<button class="btn btn-outline-dark" style="margin-left:100px;" type="submit"> 수정하기 </button>
+                     	</div>
+                     </form>
+                  	</c:if>
+              
+          </div>
+            <div class="col-md-12 text-center">
+                 	  <h3> REVIEW </h3>
+                 	  
+                 	  <table class="table text-center" style="width:50%">
+						<c:forEach var="rvlist" items="${sessionScope.rvMain}" varStatus="status">
+						<tbody>
+								<tr>
+									<td style="line-height:center">
+								   <img width="50" height="50" alt="reviewImage" src="${contextPath}/upload/${rvlist.rwImg}">
+									</td>
+									<td>${rvlist.rwContent}</td>
+								</tr>
+							</tbody>
+						</c:forEach>
+						</table>
+
+             </div>
+   		
+   			
+   			  <!-- ------------------------------------- [모달 section]--------------------------------------- -->
+	<div class="container">
+	
+	  <!-- Modal -->
+	  <div class="modal fade" id="myModal" role="dialog">
+	    <div class="modal-dialog modal-sm">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal">&times;</button>
+	          <h4 id="modal-title" class="modal-title" style="font-size: 35px"></h4>
+	        </div>
+	        <div class="modal-body">
+	          <p id="modal-body" style="font-size: 13px"></p>
+	        </div>
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-default" data-dismiss="modal" style="font-size: 13px">닫기</button>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>     
+   			
+   			
+   		
+ </body>
+</html>

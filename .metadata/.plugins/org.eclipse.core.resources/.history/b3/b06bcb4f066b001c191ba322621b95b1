@@ -1,0 +1,435 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="../common/navigation.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>리뷰 등록</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
+<script src="${contextPath}/js/jquery-1.11.3.min.js"></script>
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+input[type="text"] {
+	display: inline-block;
+	position: relative;
+	box-size: content-box;
+	padding: 1em;
+	height: 5px;
+	width: 40;
+}
+
+textarea {
+	width: 90%;
+	height: 200px;
+	padding: 10px;
+	box-sizing: border-box;
+	border: solid 1px #cbcbcb;
+	border-radius: 10px;
+	font-size: 16px;
+	resize: both;
+}
+
+/* -------------------------------- 
+Primary style
+-------------------------------- */
+a {
+	color: #808080;
+	text-decoration: none;
+}
+
+/* -------------------------------- 
+Main components 
+-------------------------------- */
+.cd-tabs {
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+	margin: 0 auto;
+}
+
+.cd-tabs:after {
+	content: '';
+	display: inline-block;
+	clear: both;
+}
+
+input:-webkit-autofil, textarea:-webkit-autofill, select:-webkit-autofill
+	{
+	background-color: transparent;
+}
+
+/* 로그인 버튼 */
+.button-insert {
+	font-size: 17px;
+	color: white;
+	text-align: center;
+	height: 50px;
+	padding: 10px;
+	background-color: #242620;
+	border: none;
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+	margin: 0 auto;
+}
+
+.button-insert:hover {
+	border: none;
+	outline: none;
+}
+
+.file-upload {
+	background-color: #ffffff;
+	width: 600px;
+	margin: 0 auto;
+	padding: 20px 0;
+}
+
+.file-upload-btn {
+	text-align: center;
+	width: 30%;
+	margin: 0;
+	color: #fff;
+	background: grey;
+	border: none;
+	padding: 10px;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+	left: 40%;
+}
+
+.file-upload-btn span {
+	text-align: center;
+	width: 30%;
+	margin: 0;
+	color: #fff;
+	background: grey;
+	border: none;
+	padding: 0;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.file-upload-content {
+	display: none;
+	text-align: center;
+}
+
+.file-upload-input {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.image-upload-wrap {
+	width: 100%;
+	height: 200px;
+	padding: 10px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	margin-top: 20px;
+	border: 1px solid #cbcbcb;
+	resize: both;
+}
+
+.image-dropping, .image-upload-wrap:hover {
+	background-color: #EAEFF1;
+	border: 1px dashed grey;
+}
+
+.image-title-wrap {
+	padding: 0 15px 15px 15px;
+	color: #222;
+}
+
+.drag-text {
+	text-align: center;
+}
+
+.drag-text h3 {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 4mm;
+	text-transform: uppercase;
+	font-stretch: wider;
+	color: grey;
+	padding: 65px 0;
+}
+
+.drag-text h3 span {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.file-upload-image {
+	max-height: 200px;
+	max-width: 600px;
+	margin: auto;
+	padding: 20px;
+}
+
+.remove-image {
+	width: 200px;
+	margin: 0;
+	color: #fff;
+	background: #d3d3d3;
+	border: none;
+	padding: 10px;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.remove-image:hover {
+	background: #d3d3d3;
+	color: #ffffff;
+	transition: all .2s ease;
+	cursor: pointer;
+}
+
+.remove-image:active {
+	border: 0;
+	transition: all .2s ease;
+}
+/* 별점 */
+.rateItem {
+	cursor: pointer;
+}
+
+.star {
+    position: relative;
+    font-size: 2rem;
+    color: #ddd;
+}
+.star input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.star span {
+    width: 0;
+    position: absolute;
+    left: 0;
+    color: red;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+</style>
+<script>
+	/* ===============================
+	 리뷰 사진 업로드 관련 
+	 ===============================
+	 */
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				$('.image-upload-wrap').hide();
+
+				$('.file-upload-image').attr('src', e.target.result);
+				$('.file-upload-content').show();
+				$('.btn-outline-dark').hide();
+
+				$('.image-title').html(input.files[0].name);
+			};
+
+			reader.readAsDataURL(input.files[0]);
+
+		} else {
+			removeUpload();
+		}
+	}
+
+	function removeUpload() {
+		$('.file-upload-input').replaceWith($('.file-upload-input').clone());
+		$('.file-upload-content').hide();
+		$('.image-upload-wrap').show();
+	}
+	$('.image-upload-wrap').bind('dragover', function() {
+		$('.image-upload-wrap').addClass('image-dropping');
+	});
+	$('.image-upload-wrap').bind('dragleave', function() {
+		$('.image-upload-wrap').removeClass('image-dropping');
+	});
+
+	/* ===============================
+	 별점 관련
+	 ===============================
+	 */
+
+	var rateText = [ "별로예요", "그저그래요", "괜찮아요", "만족해요", "최고예요" ];
+	var rateStar = [ "★", "☆" ];
+	$(document).ready(function() {
+		$('.rateItem').on('click', function(e) {
+			let $this = $(this);
+			rateThis($this);
+		});
+	});
+
+	function rateThis($this) {
+		let idx = $this.index();
+		$this.closest('div').find('.rateText').text(rateText[idx]);
+		$this.parent().find('.rateItem').each(function(index, elem) {
+			$(this).text(rateStar[$(this).index() <= idx ? 0 : 1]);
+		});
+		
+	}
+	
+	
+	const drawStar = (target) => {
+		document.querySelector(`.star span`).style.width = `${target.value * 10}%`;
+		
+		if(document.querySelector(`.star span`).style.width == '10%'){
+			$("#section-rating #rating-3").text("0.5");
+			$("#section-rating #rating-result").val("0.5");
+		} else if(document.querySelector(`.star span`).style.width == '20%'){
+			$("#section-rating #rating-3").text("1.0");
+			$("#section-rating #rating-result").val("1.0");
+		} else if(document.querySelector(`.star span`).style.width == '30%'){
+			$("#section-rating #rating-3").text("1.5");
+			$("#section-rating #rating-result").val("1.5");
+		} else if(document.querySelector(`.star span`).style.width == '40%'){
+			$("#section-rating #rating-3").text("2.0");
+			$("#section-rating #rating-result").val("2.0");
+		} else if(document.querySelector(`.star span`).style.width == '50%'){
+			$("#section-rating #rating-3").text("2.5");
+			$("#section-rating #rating-result").val("2.5");
+		} else if(document.querySelector(`.star span`).style.width == '60%'){
+			$("#section-rating #rating-3").text("3.0");
+			$("#section-rating #rating-result").val("3.0");
+		} else if(document.querySelector(`.star span`).style.width == '70%'){
+			$("#section-rating #rating-3").text("3.5");
+			$("#section-rating #rating-result").val("3.5");
+		} else if(document.querySelector(`.star span`).style.width == '80%'){
+			$("#section-rating #rating-3").text("4.0");
+			$("#section-rating #rating-result").val("4.0");
+		} else if(document.querySelector(`.star span`).style.width == '90%'){
+			$("#section-rating #rating-3").text("4.5");
+			$("#section-rating #rating-result").val("4.5");
+		} else if(document.querySelector(`.star span`).style.width == '100%'){
+			$("#section-rating #rating-3").text("5.0");
+			$("#section-rating #rating-result").val("5.0");
+		}
+	}
+	[출처] 별점(만족도) 기능 완성|작성자 CHOBO개발자
+	
+	
+	
+</script>
+</head>
+<body>
+	<div class="cd-tabs">
+		<h3 class="pt-5 pd-2 text-center">리뷰 등록</h3>
+		<h6 class="text-center pb-2" style="color: gray">베스트 리뷰어에게 5만
+			포인트를 드립니다.</h6>
+
+		<div class="container">
+			<!-- =============================================[Form 양식 시작]============================================= -->
+			<form id="rewInsert-form" method="post"
+				action="${contextPath}/review/insert?rwJewNum=${sessionScope.rw.rwJewNum}&rwerEmail=${sessionScope.loginfo.buyEmail}" role="form"
+				enctype="multipart/form-data">
+				<hr>
+				<table class="table">
+					<tr>
+						<td><a href="${contextPath}/jewelry/detail?jewIdx=${sessionScope.rw.rwJewNum}">
+								<img width="100" height="100" alt="jewImage"
+								src="${contextPath}/upload/${sessionScope.rw.rwJewImg}">
+						</a></td>
+						<td>${sessionScope.rw.rwJewName}</td>
+					</tr>
+				</table>
+
+				<%--============ rwRating ==============--%>
+				<div id="section-rating">
+				<div id="rating">
+					<div id="rating-1">만족도</div>
+					<div id="rating-2">
+						<span class="star"> ★★★★★ <span>★★★★★</span> <input
+							type="range" oninput="drawStar(this)" value="1" step="1" min="0"
+							max="10">
+						</span>
+					</div>
+					<div id="rating-3">0.0</div>
+					<input type="hidden" name="rating"  id="rating-result" value="0.0"/>
+				</div>
+			</div>
+
+				<%--
+				<div class="text-center">
+					<span> 상품은 어떠셨나요?</span> <br>
+					<div class="selectRate py-4">
+						<span class="rateItem">☆</span> 
+						<span class="rateItem">☆</span> 
+						<span class="rateItem">☆</span> 
+						<span class="rateItem">☆</span> 
+						<span class="rateItem">☆</span> 
+						<br> 
+						<span class="rateText" id="rwRating"></span>
+						<br>
+					</div>
+					 --%>
+					<%--================= rwContent ============ --%>
+					<div class="py-2">
+						<label for="rwContent" class="px-2">상세설명</label>
+						<textarea id="rwContent" name="rwContent"></textarea>
+					</div>
+				</div>
+
+				<%--================= jewImg, jewUpload============ --%>
+				<div class="file-upload text-center">
+					<label for="rwJewImg" class="ps-2 ">상품 사진</label>
+					<div id="main_wrap" class="image-upload-wrap">
+						<input class="file-upload-input" id="rwUploadFile"
+							name="rwUploadFile" type="file" onchange="readURL(this);"
+							accept="image/*">
+						<div class="drag-text"></div>
+					</div>
+					<div style="padding: 3% 35%">
+						<input class="btn btn-outline-dark" type="button"
+							data-toggle="tooltip" title="상품의 사진을 업로드 해주세요!"
+							onclick="$('#jewUploadFile').trigger( 'click' )" value="이미지 불러오기">
+					</div>
+					<div id="main_content" class="file-upload-content">
+						<img class="file-upload-image" id="rwUploadFile" src="#"
+							alt="your image" />
+						<div class="image-title-wrap">
+							<button type="button" onclick="removeUpload()"
+								class="remove-image" data-toggle="tooltip" title="클릭 하면 삭제됩니다!">
+								<span id="main_title" class="image-title">이미지 이름</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				
+				<%--=============== submit 버튼 =============== --%> 
+				<button type="submit" id="rwInsert-submit" class="button-insert">리뷰 등록하기</button>
+			</form>
+		</div>
+	</div>
+
+
+</body>

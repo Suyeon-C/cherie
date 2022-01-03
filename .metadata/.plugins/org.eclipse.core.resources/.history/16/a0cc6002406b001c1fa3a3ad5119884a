@@ -1,0 +1,102 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="../common/navigation.jsp" %>
+<!DOCTYPE html>
+<html>
+<head>
+<title>이메일 찾기</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+</head>
+<style>
+input[type="text"]{
+display:block;
+position:relative;
+box-size:content-box;
+padding:1em;
+height:5px;
+width:40;
+
+}
+/* -------------------------------- 
+Main components 
+-------------------------------- */
+
+
+
+
+.form-fild {
+  position: relative;
+  display: block;
+  width: 90%;
+  height: 60px;
+  margin: 10px auto;
+}
+
+.form-fild input {
+  position: relative;
+  z-index: 99;
+  border: none;
+  border-bottom: 1px solid #e0e0e0; 
+  display: block;
+  width: 100%;
+  height: 40px;
+  outline: none;
+  font-size: 16px;
+  color: #444;
+  background: transparent;
+  }
+  
+
+input:-webkit-autofil,
+textarea:-webkit-autofill, 
+select:-webkit-autofill  {background-color: transparent;}
+
+/* 로그인 버튼 */
+.button-login {
+	font-size: 17px;
+	color: white;
+	text-align: center;
+	height:50px;
+	padding:10px;
+	background-color:#242620;
+	border:none;
+	position: relative;
+	width: 90%;
+  	max-width: 600px;
+ 	min-width: 400px;
+    margin: 0 auto; 
+  	
+	}
+.button-login:hover{
+	border: none;
+	outline: none;
+}
+</style>
+<body>
+<div class="container py-5 text-center"> 
+<h3 class="pb-4"> 이메일 찾기 </h3>
+
+<div class="cd-tabs">
+
+<form name="buyer_emailsearch_form" action="${contextPath}/buyer/emailSearch" method="post">
+   <div class="form-fild">
+        <input type="text" class="input" placeholder="이름"
+               name="buyName" id="buyName" data-toggle="tooltip"
+               data-placement="top" title="이름을 입력해주세요.">
+   </div>
+   <div class="form-fild">
+        <input type="text" class="input" placeholder="휴대전화번호"  name="buyPhone" id="buyPhone">
+   </div>
+   <br>
+<button type="submit" class="button-login">이메일 찾기</button>
+<br><br>
+	<span><a href="${contextPath}/buyer/pwSearch">비밀번호 찾기</a>｜</span> 
+	<span><a href="${contextPath}/buyer/login">로그인</a></span> 
+</form>
+
+</div>
+
+</div>
+</body>
+</html>

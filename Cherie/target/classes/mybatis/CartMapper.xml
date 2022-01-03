@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CartMapper">
+
+	<sql id="mcart">
+		select * 
+		from cart	
+	</sql>
+	
+<insert id="cartInsert">
+	insert into cart (cartIdx, cartJewNum, cartBuyQua, cartBuyEmail, cartPrice)
+	values( (select * from (select max(cartIdx)+1 from cart) next), #{cartJewNum}, #{cartBuyQua}, #{cartBuyEmail}, #{cartPrice})
+</insert>
+
+<select id="selectAllcart" parameterType="String" resultType="Cart">
+	<include refid="mcart"/>
+	where cartBuyEmail=#{cartBuyEmail}
+</select>
+
+<delete id="cartDelete">
+	delete from cart
+	where cartIdx=#{cartIdx}
+</delete>
+
+<delete id="cartDeleteByEmail">
+	delete from cart
+	where cartBuyEmail=#{cartBuyEmail}
+</delete>
+
+<select id="duplicate" parameterType="Cart" resultType="Integer">
+	select count(*) from cart
+	where cartJewNum=#{cartJewNum} and cartBuyEmail=#{cartBuyEmail}
+</select>
+
+<update id="updateQtyPrice" parameterType="Cart">
+	update cart set
+	cartBuyQua= cartBuyQua <![CDATA[+]]> #{cartBuyQua}, 
+	cartPrice = cartPrice <![CDATA[+]]> #{cartPrice}
+	where cartJewNum=#{cartJewNum} and cartBuyEmail=#{cartBuyEmail}
+</update>
+
+<select id="selectByQty" parameterType="Cart" resultType="Integer">
+	select IFNULL(sum(cartBuyQua),0) from cart
+	where cartJewNum=#{cartJewNum} and cartBuyEmail=#{cartBuyEmail}
+</select>
+
+<update id="updateAjaxQtyPrice" parameterType="java.util.HashMap">
+	update cart set cartBuyQua=#{newQty}, cartPrice=#{newPrice}
+	where cartIdx=#{cartIdx} and cartBuyEmail=#{buyEmail}
+</update>
+
+<select id="selectCart" resultType="Cart" parameterType="Integer">
+	<include refid="mcart"/>
+	where cartIdx=#{cartIdx}
+</select>
+
+<insert id="insertOrder" parameterType="Order">
+	insert into order(orderIdx, orderNum, orderZipcode,orderAddress,
+	orderDaddress,orderBuyEmail,orderRequest, orderTime, orderQua, orderPayment, orderPhone)
+	values(orderIdx.nextval, #{orderNum}, #{orderZipcode}, #{orderAddress},
+	#{orderDaddress}, #{orderBuyEmail}, #{orderRequest}, default, #{orderQua}, #{orderPayment}, #{orderPhone} )	
+</insert>
+
+<update id="updateStock">
+	update cart set jewStock =  jewStock - #{jewQty}
+	where jewIdx = #{jewIdx}
+</update>
+
+</mapper>
+

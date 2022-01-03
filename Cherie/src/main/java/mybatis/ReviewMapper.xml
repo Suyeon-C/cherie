@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="ReviewMapper">
+
+	<sql id="mreview">
+		select *
+		from review
+	</sql>
+
+	
+	<select id ="selectRvByIdx" resultType="Review">
+		<include refid="mreview"/>
+		where rwJewNum =#{rwJewNum}
+	</select>
+
+	<!-- 리뷰 추가 -->
+	<insert id="insertRev">
+		insert into review (rwIdx, rwJewNum, rwRating, rwContent, rwerName,
+		rwerEmail, rwImg)
+		value(#{rwIdx}, #{rwJewNum}, #{rwRating}, #{rwContent},#{rwerName}, #{rwerEmail},
+		#{rwImg})
+	</insert>
+
+	<!-- 리뷰 수정 -->
+	<update id="updateRev">
+		update review set
+		rwJewNum=#{rwJewNum},
+		rwRating=#{rwRating},
+		rwContent=#{rwContent},
+		rwerName=#{rwerName},
+		rwerEmail=#{rwerEmail},
+		rwImg=#{rwImg}
+		where rwIdx = #{rwIdx}
+	</update>
+
+	<!-- 리뷰 삭제 -->
+	<delete id="deleteRev">
+		delete from review
+		where rwIdx = #{rwIdx}
+	</delete>
+
+	<!-- 쥬얼리별로 등록된 리뷰의 갯수 가져오기 -->
+	<select id="totalCount" parameterType="String" resultType="Integer">
+		select count(*) from review
+		where rwJewName = #{rwJewName}
+
+	</select>
+
+	<!-- 구매자별로 리뷰의 갯수 가져오기 -->
+	<select id="totalCountByBuyer" parameterType="String" resultType="Integer">
+		select count(*) from review
+		where rwJewName = #{rwJewName}
+		and rwerEmail = #{sessionScope.loginfo.buyEmail}
+	</select>
+
+	<!-- 쥬얼리별로 등록된 리뷰 가져오기 -->
+	<select id="selectRWByJew" resultType="Review">
+		<include refid="mreview" />
+		where rwJewNum = #{jewIdx} order by rwIdx desc
+	</select>
+
+	<!-- 구매자별로 등록한 리뷰 가져오기 (회원 상세페이지에서 활용) -->
+	<select id="selectRWByBuyer" resultType="Review">
+		<include refid="mreview" />
+		where rwJewNum = #{rwJewNum} and rwerEmail =
+		#{sessionScope.loginfo.buyEmail}
+		order by rwIdx desc
+	</select>
+	
+</mapper>

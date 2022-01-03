@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="OrderMapper">
+
+	<sql id="morder">
+		select * from
+		jeworder
+	</sql>
+
+	<!--  하나의 주문 정보 가져오기 -->
+	<select id="selectOrder" resultType="Order" parameterType="Integer">
+		<include refid="morder" />
+		where orderIdx = #{orderIdx}
+	</select>
+
+	<!--  주문 하기  -->
+	<insert id="insertOrder" parameterType="Order">
+		insert into jeworder
+		(orderIdx, orderNum, orderZipcode, orderAddress, orderDaddress,
+		orderBuyEmail, orderRequest, orderTime, orderPayment, orderQua,orderPhone)
+		values
+		(#{orderIdx}, #{orderNum}, #{orderZipcode},#{orderAddress}, #{orderDaddress}, 
+		#{orderBuyEmail}, #{orderRequest},default, #{orderPayment}, #{orderQua}, #{orderPhone})
+	</insert>
+
+	<!--  주문 취소  -->
+	<delete id="deleteOrder" parameterType="Integer">
+		delete form jeworder
+		where orderIdx = #{orderIdx}
+
+	</delete>
+
+	<!-- 구매자별로 모든 주문 가져오기 -->
+	<select id="selectAllOrder" parameterType="String" resultType="Order">
+		<include refid="morder" />
+		where orderIdx = #{orderIdx}
+		order by orderTime asc
+	</select>
+	
+	<select id="selectListOrder" parameterType="String" resultType="Order">
+		<include refid="morder" />
+		where orderBuyEmail = #{orderBuyEmail}
+	</select>
+
+	<!-- 페이징 처리 & 검색조건  -->
+	<select id="selectAllOrderPage" resultType="Order">
+		<include refid="morder" />
+		where orderBuyEmail = #{orderBuyEmail} 
+	</select>
+
+	<!-- 검색 조건에 맞은 주문 갯수 가져오기 -->
+	<select id="totalCount" parameterType="String"
+		resultType="Integer">
+		select count(*) from jeworder where jewName like CONCAT('%',#{keyword},'%')
+	</select>
+
+</mapper>

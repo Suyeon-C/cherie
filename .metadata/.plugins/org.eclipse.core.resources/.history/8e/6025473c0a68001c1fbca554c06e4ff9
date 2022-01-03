@@ -1,0 +1,70 @@
+package com.order.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.common.controller.FlowParameter;
+import com.common.controller.Paging;
+import com.dto.Buyer;
+import com.dto.Cart;
+import com.dto.Jewelry;
+import com.dto.Order;
+import com.service.BuyerService;
+import com.service.JewelryService;
+import com.service.OrderService;
+
+@Controller
+@RequestMapping("order")
+public class OrderListController {
+
+	
+	@Autowired
+	OrderService oser;
+	
+	@Autowired
+	JewelryService jser;
+
+
+	@GetMapping(value="/list")
+	public String get(@RequestParam(value="orderBuyEmail", required=true) String orderBuyEmail,
+					  HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		
+		// 해당 목록 가져오기
+		List<Order> lists = this.oser.selectListOrder(orderBuyEmail);
+
+		if(lists.size() > 0) {
+			
+			Jewelry jew;
+			for(Order order : lists) {
+				jew = this.jser.selectJew(order.getOrderNum());
+				order.setJewName(jew.getJewName());
+				order.setJewImg(jew.getJewImg());
+				order.setJewStock(jew.getJewStock());
+				order.setJewPrice(jew.getJewPrice());
+			}
+		
+			session.setAttribute("lists", lists);
+			session.setAttribute("total_list", lists.size());
+		
+		
+			return "order/list";
+		
+		} else {
+
+			session.setAttribute("message", "주문 내역이 없습니다. <br> 상품을 구매해보세요!");
+			return "common/main";
+		}
+		
+		
+	}
+}

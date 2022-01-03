@@ -1,0 +1,345 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ include file="../common/navigation.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>쥬얼리 등록</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="//code.jquery.com/jquery-1.12.4.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style>
+input[type="text"] {
+	display: inline-block;
+	position: relative;
+	box-size: content-box;
+	padding: 1em;
+	height: 5px;
+	width: 40;
+}
+
+textarea {
+	width: 90%;
+	height: 200px;
+	padding: 10px;
+	box-sizing: border-box;
+	border: solid 1px #cbcbcb;
+	border-radius: 10px;
+	font-size: 16px;
+	resize: both;
+}
+
+/* -------------------------------- 
+Primary style
+-------------------------------- */
+
+a {
+	color: #808080;
+	text-decoration: none;
+}
+
+/* -------------------------------- 
+Main components 
+-------------------------------- */
+.cd-tabs {
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+	margin: 0 auto;
+}
+
+.cd-tabs:after {
+	content: '';
+	display: inline-block;
+	clear: both;
+}
+
+input:-webkit-autofil, textarea:-webkit-autofill, select:-webkit-autofill
+	{
+	background-color: transparent;
+}
+
+/* 로그인 버튼 */
+.button-insert {
+	font-size: 17px;
+	color: white;
+	text-align: center;
+	height: 50px;
+	padding: 10px;
+	background-color: #242620;
+	border: none;
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	min-width: 400px;
+	margin: 0 auto;
+}
+
+.button-insert:hover {
+	border: none;
+	outline: none;
+}
+
+.file-upload {
+	background-color: #ffffff;
+	width: 600px;
+	margin: 0 auto;
+	padding: 20px 0;
+}
+
+.file-upload-btn {
+	text-align: center;
+	width: 30%;
+	margin: 0;
+	color: #fff;
+	background: grey;
+	border: none;
+	padding: 10px;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+	left: 40%;
+}
+
+.file-upload-btn span {
+	text-align: center;
+	width: 30%;
+	margin: 0;
+	color: #fff;
+	background: grey;
+	border: none;
+	padding: 0;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.file-upload-content {
+	display: none;
+	text-align: center;
+}
+
+.file-upload-input {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.image-upload-wrap {
+	width: 550px;
+	height: 200px;
+	margin-top: 20px;
+	border: 2px dashed grey;
+	position: relative;
+}
+
+.image-dropping, .image-upload-wrap:hover {
+	background-color: #EAEFF1;
+	border: 1px dashed grey;
+}
+
+.image-title-wrap {
+	padding: 0 15px 15px 15px;
+	color: #222;
+}
+
+.drag-text {
+	text-align: center;
+}
+
+/* �뚯씪 �낅줈�� �먯꽑 諛뺤뒪 �� �띿뒪�� */
+.drag-text h3 {
+	font-size: 11px;
+	font-weight: 400;
+	line-height: 4mm;
+	text-transform: uppercase;
+	font-stretch: wider;
+	color: grey;
+	padding: 65px 0;
+}
+
+.drag-text h3 span {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.file-upload-image {
+	max-height: 200px;
+	max-width: 600px;
+	margin: auto;
+	padding: 20px;
+}
+
+.remove-image {
+	width: 200px;
+	margin: 0;
+	color: #fff;
+	background: #d3d3d3;
+	border: none;
+	padding: 10px;
+	border-radius: 10px;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.remove-image:hover {
+	background: #d3d3d3;
+	color: #ffffff;
+	transition: all .2s ease;
+	cursor: pointer;
+}
+
+.remove-image:active {
+	border: 0;
+	transition: all .2s ease;
+}
+</style>
+<script>
+	/* ===============================
+	 jew 사진 업로드 관련 
+	 ===============================
+	 */
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				$('.image-upload-wrap').hide();
+
+				$('.file-upload-image').attr('src', e.target.result);
+				$('.file-upload-content').show();
+				$('.btn-outline-dark').hide();
+
+				$('.image-title').html(input.files[0].name);
+			};
+
+			reader.readAsDataURL(input.files[0]);
+
+		} else {
+			removeUpload();
+		}
+	}
+
+	function removeUpload() {
+		$('.file-upload-input').replaceWith($('.file-upload-input').clone());
+		$('.file-upload-content').hide();
+		$('.image-upload-wrap').show();
+	}
+	$('.image-upload-wrap').bind('dragover', function() {
+		$('.image-upload-wrap').addClass('image-dropping');
+	});
+	$('.image-upload-wrap').bind('dragleave', function() {
+		$('.image-upload-wrap').removeClass('image-dropping');
+	});
+</script>
+</head>
+<body>
+	<div class="cd-tabs">
+		<h3 class="pt-5 pd-2 text-center">판매 상품 등록</h3>
+		<h6 class="text-center pb-2" style="color: gray">아래 판매할 상품 정보를 입력하세요</h6>
+		<hr>
+		<div class="container">
+			<!-- =============================================[Form 양식 시작]============================================= -->
+			<form id="jewInsert-form" method="post"
+				action="${contextPath}/jewelry/insert" role="form" enctype="multipart/form-data">
+				<input type="hidden" id="isCheck" class="isCheck" name="isCheck" value="false"> 
+				<input type="hidden" id="jewSellEmail" name="jewSellEmail" value="${sessionScope.loginfoseller.sellEmail}">
+
+				<%--================= jewSellEmail ============ --%>
+				<div class="input-group">
+					<label for="jewName" class="px-2">판매자 이메일&nbsp;</label>
+					<div class="form-text">
+						<input type="text" class="form-control" disabled="disabled" value="${sessionScope.loginfoseller.sellEmail}" id="jewSellEmail" name="jewSellEmail">
+						<div></div>
+					</div>
+				</div>
+
+				<%--================= jewCategory============ --%>
+				<div class="input-select">
+					<label for="jewCategory" class="px-2">종류&nbsp;</label> 
+					<select class="form-select" name="jewCategory" id="jewCategory">
+						<option value="-">종류를 선택하세요.</option>
+						<option value="r">반지</option>
+						<option value="n">목걸이</option>
+						<option value="e">귀걸이</option>
+					</select>
+				</div>
+
+				<%--================= jewName ============ --%>
+				<div class="input-group">
+					<label for="jewName" class="px-2">상품명&nbsp;</label>
+					<div class="form-text">
+						<input type="text" class="form-control" placeholder="상품명을 입력하세요" id="jewName" name="jewName">
+						<div class="valid_check" id="check_jewName"></div>
+					</div>
+				</div>
+
+				<%--================= jewPrice ============ --%>
+				<div class="input-group">
+					<label for="jewStock" class="ps-2 pe-4">가격</label>
+					<div class="form-text">
+						<input type="text" class="form-control" placeholder="상품 1개당 가격을 입력하세요" id="jewPrice" name="jewPrice">
+						<div class="valid_check" id="check_jewPrice"></div>
+					</div>
+				</div>
+
+				<%--================= jewStock ============ --%>
+				<div class="input-group">
+					<label for="jewStock" class="px-2">재고수량</label>
+					<div class="form-text">
+						<input type="text" class="form-control" placeholder="판매가 가능한 수량 입력하세요" id="jewStock" name="jewStock">
+						<div class="valid_check" id="check_jewStock"></div>
+					</div>
+				</div>
+
+
+				<%--================= jewDetail============ --%>
+				<div class="py-2">
+					<label for="jewDetail" class="px-2">상세설명</label>
+					<textarea id="jewDetail" name="jewDetail">${jew.jewDetail}</textarea>
+					<div class="valid_check" id="check_jewDetail"></div>
+				</div>
+
+				<%--================= jewImg, jewUpload============ --%>
+				<div class="file-upload">
+					<label for="jewImg" class="ps-2 ">상품 사진</label>
+					<div id="main_wrap" class="image-upload-wrap">
+						<input class="file-upload-input" id="jewUploadFile"
+							name="jewUploadFile" type="file" onchange="readURL(this);" accept="image/*">
+						<div class="drag-text"></div>
+					</div>
+					<div style="padding: 3% 35%">
+						<input class="btn btn-outline-dark" type="button"
+							data-toggle="tooltip" title="상품의 사진을 업로드 해주세요!"
+							onclick="$('#jewUploadFile').trigger( 'click' )" value="이미지 불러오기">
+					</div>
+					<div id="main_content" class="file-upload-content">
+						<img class="file-upload-image" id="jewUploadFile" src="#" alt="your image" />
+						<div class="image-title-wrap">
+							<button type="button" onclick="removeUpload()" class="remove-image" data-toggle="tooltip" title="클릭 하면 삭제됩니다!">
+								<span id="main_title" class="image-title">이미지 이름</span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<!--  submit 버튼 -->
+				<button type="submit" id="jewInsert-submit" class="button-insert">상품 추가하기</button>
+			</form>
+		</div>
+	</div>
+
+</body>
+</html>

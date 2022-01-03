@@ -1,0 +1,83 @@
+@charset "UTF-8";
+
+input[type="text"]{
+display:inline-block;
+position:relative;
+padding:1em;
+height:5px;
+width:40;
+
+}
+
+input[type="password"]{
+display:inline-block;
+position:relative;
+padding:1em;
+height:5px;
+width:40;
+}
+
+a {
+  color: #808080;
+  text-decoration: none;
+}
+
+.cd-tabs {
+  width: 80%;
+  max-width: 600px;
+  min-width: 400px;
+  margin: 0 auto;
+}
+.cd-tabs:after {
+  content: '';
+  display: inline-block;
+  clear: both;
+}
+
+
+.form-control {
+  position: relative;
+  display:inline-block;
+  width: 90%;
+  height: 60px;
+  margin: 10px auto;
+}
+
+.form-control input {
+  position: relative;
+  z-index: 99;
+  border: 1px solid #e0e0e0;
+  display: inline-block;
+  width: 80%;
+  height: 40px;
+  outline: none;
+  font-size: 16px;
+  color: #444;
+  background: transparent;
+}
+
+input:-webkit-autofil,
+textarea:-webkit-autofill, 
+select:-webkit-autofill  {background-color: transparent;}
+
+.button-update
+.login-btn {
+	font-size: 17px;
+	color: white;
+	text-align: center;
+	height:50px;
+	padding:10px;
+	background-color:#242620;
+	border:none;
+	position: relative;
+	width: 90%;
+  	max-width: 600px;
+ 	min-width: 400px;
+    margin: 0 auto; 
+	}
+	
+.button-update:hover
+.login-btn:hover{
+	border: none;
+	outline: none;
+}

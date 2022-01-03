@@ -1,0 +1,37 @@
+1638963394109	Move 'root-context.xml' to 'spring'
+1638964259135	Delete element
+1638965053198	Rename type 'Customer'
+1638966613926	Rename package 'common'
+1638966619737	Delete element
+1638966626735	Delete element
+1638967621032	Rename type 'Main'
+1638969175612	Delete element
+1638969181100	Delete element
+1638971115407	Rename package 'common.controller'
+1638971123350	Rename package 'dto'
+1638971130133	Rename package 'comdto'
+1638976746824	Rename resource 'main.jsp'
+1638976776576	Rename resource 'N.jsp'
+1638988596233	Delete element
+1638990597558	Delete element
+1639040818254	Delete element
+1639042181113	Delete element
+1639066342891	Rename type 'JewerlyDAO'
+1639066350120	Rename type 'JewerlyDAOImpl'
+1639067928463	Rename type 'SellerDAO'
+1639067943559	Rename type 'SellerDAo'
+1639068140361	Delete element
+1639068148609	Rename type 'SellerDAOImpl'
+1639069523540	Rename resource 'jewerly'
+1639069534291	Rename resource 'jewerlyDetail.jsp'
+1639074885269	Delete element
+1639075610342	Delete element
+1639075614895	Delete element
+1639140346363	Delete element
+1639146449294	Delete element
+1639152777438	Rename type 'BuyerLoginController'
+1639152789948	Rename type 'BuyerPWSearchController'
+1639152800394	Rename type 'BuyerEmailSearchController'
+1639161645232	Rename type 'BuyLoginController'
+1639226144508	Delete element
+1639226153618	Delete element

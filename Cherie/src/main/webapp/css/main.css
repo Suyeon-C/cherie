@@ -1,0 +1,97 @@
+
+/* 히어로 */
+.hero {
+	width:100%;
+ 	height: 50%;
+ 	position: relative;
+ 	overflow:hidden;
+ 	
+	
+}
+
+/* selected 타이틀 */
+.title_select{
+	text-align:center;
+	font: bold;
+	padding-top: 40px;
+
+}
+
+
+/* selected 목록 
+
+background-image: url('../image/slider.png');
+ 	background-repeat: no-repeat;
+ 	background-size:cover;
+
+.list_select ul > li{
+	padding:20px 100px;
+	
+display:inline-block;
+		color: gray;
+
+	font-size:20px;
+	text-transform: uppercase;
+}
+
+로그인 form 부분 
+form {
+  display: block;
+  position: relative;
+  
+}
+
+.form-group{
+	visibility: visible; 
+	animation-duration: 500ms; 
+	animation-delay: 0.6s; 
+	animation-name: fadeInDown;
+	 display: inline-block;
+	
+}
+
+.form-fild {
+  position: relative;
+  display: block;
+  width: 90%;
+  height: 60px;
+  margin: 10px auto;
+ 
+}
+
+
+.form-fild input {
+  position: relative;
+  z-index: 99;
+  border: none;
+  border-bottom: 1px solid #e0e0e0; 
+  display: block;
+  width: 100%;
+  height: 40px;
+  outline: none;
+  font-size: 16px;
+  color: #444;
+  background: transparent;
+}
+
+input:-webkit-autofil,
+textarea:-webkit-autofill, 
+select:-webkit-autofill  {background-color: transparent;}
+
+
+
+
+
+.cd-tabs {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  min-width: 400px;
+  margin: 0 auto;
+}
+.cd-tabs:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+*/
