@@ -66,14 +66,13 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 - 네이베이션 바는 비회원, 개인 회원, 사업자 회원, 관리자 회원으로 구분하여 처리한다.
 
 ## 3-2. 회원가입 및 유효성 평가
-
-![ezgif com-video-to-gif](https://user-images.githubusercontent.com/97042437/148053543-0098dbaa-a1d8-4a12-b6ab-be7c46ef9df7.gif)
+![화면 기록 2022-01-04 오후 8 26 25](https://user-images.githubusercontent.com/97042437/148099709-f09d4e30-fa5a-4e07-bd3b-06a4760053b6.gif)
 - JavaScript와 Ajax를 활용하여 비동기 통신으로 이메일 중복확인을 구현하였다.
 - 우편번호와 주소는 Daum API를 이용하여 주소를 입력한다.
 - [JS 코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/webapp/js/buyerSignup.js)
 
 ## 3-3. 로그인 & 내 정보 보기 및 수정/ 탈퇴
-![ㅇ](https://user-images.githubusercontent.com/97042437/148051939-8888bf9d-500e-4762-a380-6d90c64be77e.gif)
+![로그인](https://user-images.githubusercontent.com/97042437/148103672-f343f02c-0420-4c90-9813-0e6290a0a5be.gif)
 - 로그인은 개인 회원과 사업자 회원 창을 나누어 구현하였다. 
 - Kakao 오픈 API를 이용하여 카카오 로그인 기능을 구현했으며, 가입 정보가 없을 시 자동으로 회원가입 한 후 메인화면으로 이동한다. 
 - 내 정보에서 가입정보 및 회원 정보를 수정 및 탈퇴 할 수 있다. 
@@ -81,7 +80,7 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 
 
 ## 3-4. 이메일/비밀번호 찾기 & 임시비밀번호 발급
-![ezgif com-video-to-gif-2](https://user-images.githubusercontent.com/97042437/148054396-23130766-39a4-4ae7-a56a-dd353df67822.gif)
+![화면 기록 2022-01-04 오후 8 41 17](https://user-images.githubusercontent.com/97042437/148098827-e9ae31b8-3868-4139-b1df-5efb604ca30b.gif)
 <img width="746" alt="스크린샷 2022-01-04 오후 8 43 51" src="https://user-images.githubusercontent.com/97042437/148071979-06585585-8a97-4382-bcb2-52b3333add08.png">
 
 - 이메일 찾기는 회원테이블에서 이름, 휴대폰 번호를 조회하여 일치하는 이메일 데이터를 화면에 보여준다.
@@ -89,7 +88,8 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 - [apache.commons를 이용한 ServiceImpl 코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/service/BuyerServiceImpl.java)
 
 ## 3-5. 판매 상품 리스트/ 상세보기 
-![ezgif com-video-to-gif-2](https://user-images.githubusercontent.com/97042437/148058064-64c11475-873b-41ea-8ada-68701aadf8d6.gif)
+![화면 기록 2022-01-04 오후 9 17 24](https://user-images.githubusercontent.com/97042437/148100722-4e188b46-4f5a-4866-b9b4-c0734934e705.gif)
+
 - 개인 회원과 판매회원 공통 사항 :
 검색 기능을 통하여 조건에 맞는 상품을 볼 수 있다.
 상품 상세보기에서는 그 상품을 구매한 회원들이 작성한 리뷰를 나열하여 보여준다.
@@ -100,8 +100,8 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 - '수정하기'버튼을 누르면 현재 남은 재고량과 상품의 정보를 수정할 수 있다. 
 
 ## 3-6.장바구니 등록 및 결제 
-![ezgif com-video-to-gif](https://user-images.githubusercontent.com/97042437/148060532-fe586afd-40ed-4344-99c2-0c4198236a62.gif)
-
+![결제](https://user-images.githubusercontent.com/97042437/148097837-89cc8fa5-36e9-4ad3-9051-6abca7d4eab6.gif)
+- 장바구니 수량 +/- ajax를 사용하여 구현하였다.
 - 결제 폼은 기존 배송지와 새로운 배송지 2개로, 기존 배송지에는 회원정보에 담긴 데이터를 넣어 두고 새로운 배송지에는 새로 입력된 데이터로 결제를 진행한다.
 - 상품 결제는 Import API를 통해 간편한 결제 시스템을 구현한다.
 - 결제가 완료시, 데이터베이스의 주문테이블에 주문내역을 저장한다.
@@ -110,17 +110,17 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 
 
 ## 3-7. 주문 내역 / 취소 및 리뷰 작성 
-![ezgif com-video-to-gif](https://user-images.githubusercontent.com/97042437/148057658-38c47f23-46a6-4e28-994e-b4d036e15496.gif)
+![리뷰](https://user-images.githubusercontent.com/97042437/148101898-d753902f-c7c6-48ab-bc89-e6d1c2a6afa9.gif)
 - [주문] 카테고리 클릭시, 회원별로 주문한 내역을 보여준다. 
 - 상품별로 주문 취소와 리뷰 작성이 가능하다.
 - [코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/order/controller/OrderListController.java)
 
 ## 3-8. 사업자 회원] 내 정보 및 상품 수정/탈퇴(삭제)
-![ezgif com-video-to-gif-3](https://user-images.githubusercontent.com/97042437/148059392-e4d11131-8f1a-4bff-b71a-3ee001450eda.gif)
+![프로젝트](https://user-images.githubusercontent.com/97042437/148098279-e5241a8b-226f-4092-be94-4d822f0d173e.gif)
 - 개인 회원과 동일하게 내 정보 수정 및 탈퇴가 가능하도록 구현하였다.
 - [코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/jewerly/controller/JewInsertController.java)
 
 ## 3-9. 관리자] 개인 회원과 사업자 회원 목록
-![ezgif com-video-to-gif-2](https://user-images.githubusercontent.com/97042437/148061160-f53fc061-3fc6-4d2f-865d-2b8c8afbcbb4.gif)
+![바](https://user-images.githubusercontent.com/97042437/148095917-1d051245-030d-4874-b903-14f10a79f4dd.gif)
 - 가입한 개인 회원과 사업자 회원에 대한 정보 확인/수정 및 탈퇴 가능하다.
 - [코드 보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/admin/controller/AdminSellController.java)
