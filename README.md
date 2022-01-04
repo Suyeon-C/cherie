@@ -42,7 +42,7 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 |  |  |
 | ------ | ------ |
 | Front-End | HTML, CSS, JS, jQuery, BootStrap |
-| Back-End | JAVA, JSP, MyBatis |
+| Back-End | JAVA, Spring, MyBatis |
 | Database | MySQL,exerd |
 | Server | Apache Tomcat v9.0|
 | IDE| Eclipse |
