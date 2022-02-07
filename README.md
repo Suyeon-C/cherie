@@ -115,12 +115,13 @@ Spring Framework를 이용한 악세사리 판매 및 관리 서비스 제공 �
 - 상품별로 주문 취소와 리뷰 작성이 가능하다.
 - [코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/order/controller/OrderListController.java)
 
-## 3-8. 사업자 회원] 내 정보 및 상품 수정/탈퇴(삭제)
+## 3-8. [사업자 회원] 내 정보 및 상품 수정/탈퇴(삭제)
 ![프로젝트](https://user-images.githubusercontent.com/97042437/148098279-e5241a8b-226f-4092-be94-4d822f0d173e.gif)
 - 개인 회원과 동일하게 내 정보 수정 및 탈퇴가 가능하도록 구현하였다.
 - [코드보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/jewerly/controller/JewInsertController.java)
 
-## 3-9. 관리자] 개인 회원과 사업자 회원 목록
+## 3-9. [관리자] 개인 회원과 사업자 회원 목록
 ![바](https://user-images.githubusercontent.com/97042437/148095917-1d051245-030d-4874-b903-14f10a79f4dd.gif)
 - 가입한 개인 회원과 사업자 회원에 대한 정보 확인/수정 및 탈퇴 가능하다.
+- 사업자의 상품의 수정하거나 삭제 가능하다.
 - [코드 보기](https://github.com/Suyeon-C/cherie/blob/27ed76e6ec2eada4b3fd874a4eeaaa130924848f/Cherie/src/main/java/com/admin/controller/AdminSellController.java)
